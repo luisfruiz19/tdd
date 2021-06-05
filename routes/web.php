@@ -1,18 +1,25 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+use Illuminate\Http\Request;
 
-Route::get('/', function () {
-    return view('welcome');
+//Route::post('/statuses',[\App\Http\Controllers\StatusController::class,'store'])->name('statuses.store');
+
+Route::resource('/status',\App\Http\Controllers\StatusController::class)->middleware('auth');
+Route::post('/user-create',function(Request  $request){
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => bcrypt($request->password)
+    ]);
+
+    return response()->json(['data' => $user],201);
+
 });
+
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
